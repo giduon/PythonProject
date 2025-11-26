@@ -1,5 +1,5 @@
 try:
-    x, y = 4, 1
+    x, y = 4, 2
 
     z = x / y
     print(z)

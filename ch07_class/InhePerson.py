@@ -1,28 +1,27 @@
 class Person:
-    # 일반화 : 공통된 변수는 수퍼클래스에 작성
     def __init__(self, name, age, gender):
         self.name = name
         self.age = age
         self.gender = gender
     # end def __init__
 
+    def getName(self):
+        return self.name + '님 '
+    # end def getName
+
     def showData(self):
         print('이름 : ' + str(self.name))
-        print('성별 : ' + str(self.gender))
         print('나이 : ' + str(self.age))
+        print('성별 : ' + str(self.gender))
     # end def showData
 # end class Person
 
-class Employee(Person): # 서브 클래스(수퍼클래스)
-    def __init__(self, name, age, gender, salary, hiredate ):
+class Employee(Person): # 서브클래스(수퍼클래스)
+    def __init__(self, name, age, gender, salary, hiredate):
         super().__init__(name, age, gender)
         self.salary = salary
         self.hiredate = hiredate
     # end def __init__
-
-    def getName(self):
-        return self.name + '님'
-    # end def getName
 
     def showData(self):
         super().showData()
@@ -31,18 +30,39 @@ class Employee(Person): # 서브 클래스(수퍼클래스)
     # end def showData
 
     def doWork(self):
-        print(super().name + '열심히 일합니다.')
+        print(super().getName() + '열심히 일합시다.')
     # end def doWork
 # end class Employee
 
 class Student(Person):
-    pass
+    def __init__(self, name, age, gender, subject, grade):
+        super().__init__(name, age, gender)
+        self.subject = subject
+        self.grade = grade
+    # end def __init__
+
+    def showData(self):
+        super().showData()
+        print('과목 : ' + str(self.subject))
+        print('학점 : ' + str(self.grade))
+    # end def showData
+
+    def doStudy(self):
+        print(super().getName() + '열심히 공부합시다.')
+    # end def doStudy
 # end class Student
 
 soo = Employee('김철수', 20, '남자', 50000, '2020/12/25')
 soo.showData()
 soo.doWork()
-print('-'*30)
+print('-'*20)
 
-# hee = Student('박영희', 19, '여자', '국어', 'A학점')
-# print('-'*30)
+hee = Student('박영희', 19, '여자', '국어', 'A학점')
+hee.showData()
+hee.doStudy()
+print('-'*20)
+
+# Person 클래스를 상속 받는 Teacher 클래스를 구현해 보세요.
+# kim = Teacher('김유신', 40, '남자', '파이썬')
+# kim.showData()
+# kim.doTeach() # 파이썬을 가르칩니다.

@@ -1,21 +1,20 @@
 class Circle:
-    type = '원' # 타입 정의
-
-    def __init__(self, center_x, center_y, radius):
-        self.center_x = center_x
-        self.center_y = center_y
+    type = '원'
+    def __init__(self, xpos, ypos, radius):
+        self.xpos = xpos 
+        self.ypos = ypos
         self.radius = radius
-    # end def __init__
 
     def showinfo(self):
-        print('원 중심 : %s, %s' % (self.center_x, self.center_y))
-        print('반지름 : %s' % self.radius)
+        print('원 중심 : {}, {}'.format(self.xpos, self.ypos))
+        print('반지름 : {}'.format(self.radius))
 
-        area = 3.14 * self.radius ** 2
-        print('면적 : %s' % area)
-    # end def showinfo
+        perimeter = 2 * 3.14 * self.radius
+        print('둘레 길이 : {:.3f}'.format(perimeter))
+
+        area = 3.14 * self.radius ** 2  
+        print('면적 : {}'.format(area))
 # end class Circle
-
 
 print('도형의 타입 : %s' % (Circle.type))
 print('-' * 20)
@@ -23,6 +22,5 @@ print('-' * 20)
 circle1 = Circle(3, 5, 10)
 circle1.showinfo()
 print( '-' * 20 )
-
 circle2 = Circle(8, 6, 20)
 circle2.showinfo()
