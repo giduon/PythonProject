@@ -66,7 +66,7 @@ print(y[0:num_to_show])
 print('\n머신 러닝에 사용하기 위하여 문자를 숫자화 시킵니다.')
 vectorizer = CountVectorizer()
 x = vectorizer.fit_transform(x)
-# print(x)
+print(type(x))
 
 # <Compressed Sparse Row sparse matrix of dtype 'int64'
 # 	with 439 stored elements and shape (86, 139)>
@@ -74,7 +74,8 @@ x = vectorizer.fit_transform(x)
 #   (0, 107)	1 <-- 0번째 문서에서 107에 해당하는 단어가 1번 나왔습니다.
 #   (0, 43)	1 <-- 0번째 문서에서 43에 해당하는 단어가 1번 나왔습니다.
 
-# print(f'문서(이메일 제목)의 갯수는 {x.shape(0)}이고, 출현한 단어의 갯수는 {x.shape(1)}개입니다.')
+print(f'문서(이메일 제목)의 갯수는 {x.shape[0]}이고, 출현한 단어의 갯수는 {x.shape[1]}개입니다.\n')
+
 vocab = vectorizer.vocabulary_
 # dict comprehension : 역매핑(숫자 -> 단어)
 inv_vocab = {v : k for k, v in vocab.items()}
@@ -84,17 +85,17 @@ for su in su_list:
     print(f'\'{su}\'번에 해당하는 단어 : {inv_vocab[su]}')
 # end for
 
-print('\학습용 데이터와 테스트용 데이터를 분리 시킵니다.')
+print('\n학습용 데이터와 테스트용 데이터를 분리 시킵니다.')
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
 
-print('\학습용 독립 변수 정보')
+print('학습용 독립 변수 정보')
 print(x_train[0:num_to_show])
 
-print('\n학습용 독종속 변수 정보')
+print('\n학습용 종속 변수 정보')
 print(y_train[0:num_to_show])
 
 # MultinomialNB : 범주형 데이터에 사용하는 나이브 베이즈 클래스
-# 베이즈 정리 : 조건부 확률에 기반한...
+# 베이즈 정리 : 조건부 확률에 기반한 ...
 print('\n모델 생성')
 model = MultinomialNB()
 
@@ -103,7 +104,7 @@ model.fit(x_train, y_train) # 학습 시킴
 print('\n실제 값(actual)')
 print(y_test) # 실제 정답을 의미하며, 머신 러닝에서 label이라고 부릅니다.
 
-print('\n예측 값')
+print('\n예측 값(predicted)')
 prediction = model.predict(x_test) # 내가 작성한 답지
 print(prediction)
 
@@ -112,7 +113,7 @@ prediction_proba = model.predict_proba(x_test)
 print(prediction_proba) # 내부에서는 확률로 처리함
 
 print('\n새로운 메일에 대하여 어떠한 유형의 메일인지 분류합니다.')
-check_file = open(dataIn + 'check_file.txt', 'rt', encoding='utf-8')
+check_file = open(dataIn + 'checkedMail.csv', 'rt', encoding='utf-8')
 test_mail_list = [onemail.strip() for onemail in check_file.readlines()]
 
 print('\n점검하고 싶은 메일 목록')
@@ -125,9 +126,10 @@ for new_email in test_mail_list:
     new_email_tokenized = tokenize(new_email) # 토큰화
     new_email_vec = vectorizer.transform([new_email_tokenized]) # 벡터화
 
-    prediction = model.predict_proba(new_email_vec) # 모델을 이용하여 예측
+    prediction = model.predict(new_email_vec) # 모델을 이용하여 예측
+
     result = f"'{prediction[0]}' 메일 : '{new_email}'"
-    print(result) # 결과출력
+    print(result) # 결과 출력
 
     final_email_info.append(result)
 # end for

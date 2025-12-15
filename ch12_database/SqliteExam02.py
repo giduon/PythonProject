@@ -36,8 +36,10 @@ for student in root.iter('student'):
     subject = student.find('subject').text
     jumsu = student.find('jumsu').text
     data_list.append((sid, subject, jumsu))
-
 # end for
+
+# print(data_list)
+
 sql = "insert into sungjuk values(?, ?, ?) "
 mycursor.executemany(sql, data_list)
 
@@ -46,17 +48,17 @@ conn.commit() # 데이터 베이스 커밋
 # step05 : 전체 목록을 보여 주는 함수 작성
 def getAllStudents(dbcursor):
     for onetuple in dbcursor:
-        print('아이디 :' + onetuple[0], end='')
-        print(', 과목 :' + onetuple[1], end='')
-        print(', 점수 :' + str(onetuple[2]))
+        print('아이디 : ' + onetuple[0], end='')
+        print(', 과목 : ' + onetuple[1], end='')
+        print(', 점수 : ' + str(onetuple[2]))
     # end for
 # end def
 
 # step06 : 테이블의 내용 출력
-sql = "select * from sungjuk"
+sql = 'select * from sungjuk'
 mycursor.execute(sql)
 getAllStudents(mycursor)
 
-# step -- : 작업 객체를 닫기
+# step07 : 작업 객체를 닫기
 mycursor.close()
 conn.close()

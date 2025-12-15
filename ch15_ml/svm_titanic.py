@@ -1,6 +1,7 @@
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+from sklearn.svm import SVC
 
 plt.rc('font', family='Malgun Gothic')
 plt.rcParams['axes.unicode_minus'] = False # 마이너스 기호 글자 깨짐 방지
@@ -9,7 +10,7 @@ plt.rcParams['axes.unicode_minus'] = False # 마이너스 기호 글자 깨짐 �
 from sklearn.metrics import confusion_matrix, classification_report, roc_curve, auc
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-from sklearn.svm import SVC
+
 
 dataOut = './../dataOut/'
 
@@ -19,7 +20,7 @@ print(f'데이터 타입 : {type(df)}')
 print(f'컬럼 정보 : {df.columns}')
 
 print(f'\n지도 학습법 : 문제지와 답지를 같이 나눠주고, 분석을 예측하는 기법')
-print(f'\n타이타닉은 나머지 컬럼을 입력으로, "survived" 컬럼을 예측하는 분류 문제입니다')
+print(f'타이타닉은 나머지 컬럼을 입력으로, "survived" 컬럼을 예측하는 분류 문제입니다.')
 
 print(f'\n일부 데이터 확인')
 print(df.head())
@@ -29,12 +30,12 @@ survived_counts = df['survived'].value_counts()
 survived_counts.index = survived_counts.index.map({0: '사망', 1: '생존'})
 print(survived_counts)
 
-print(f'\n이 모델은 클래스의 갯수가 {len(survived_counts)}개 입니다.')
+print(f'\n이 모델은 클래스의 갯수가 {len(survived_counts)}개입니다.')
 
-print(f'\n중복되는 행 개수 : {sum(df.duplicated())}개 입니다.')
-print(f'before drop duplicated : {len(df)}개 입니다.')
+print(f'\n중복되는 행 개수 : {sum(df.duplicated())}개입니다.')
+print(f'before drop duplicated : {len(df)}개입니다.')
 df = df.drop_duplicates()
-print(f'after drop duplicated : {len(df)}개 입니다.')
+print(f'after drop duplicated : {len(df)}개입니다.')
 
 print(f'\n데이터 프레임 정보 확인하기')
 print(df.info())
@@ -61,15 +62,15 @@ print(f'컬럼 embarked의 결측치를 {most_frequency} 값으로 채워 줍니
 dropnadf["embarked"] = dropnadf["embarked"].fillna(most_frequency)
 
 print(f'\n머신 러닝 분석에서 사용되는 column을 특성(Feature)라고 부릅니다.')
-print(f'분석에 사용할 열(특성)선택')
+print(f'분석에 사용할 열(특성) 선택')
 newframe = dropnadf[['survived', 'pclass', 'sex', 'age', 'sibsp', 'parch', 'embarked']]
 print(newframe.columns)
 
 print(f'\n데이터 일부분 확인')
 print(newframe.head())
 
-print(f'\n범주형 데이터 전처리 : one-hot encoding') # 한개만 따끈따끈
-# 범주형 데이터를 머신 러닝 모델이 인식할 수 있도록 숫자 형식으로 반환해 줍니다.
+print(f'\n범주형 데이터 전처리 : one-hot encoding')
+# 범주형 데이터를 머신 러닝 모델이 인식할 수 있도록 숫자 형식으로 변환해 줍니다.
 onehot_sex = pd.get_dummies(data=newframe['sex'], dtype=int)
 onehot_embarked = pd.get_dummies(data=newframe['embarked'], prefix='town', dtype=int)
 newframe = pd.concat([newframe, onehot_sex, onehot_embarked], axis=1)
@@ -78,11 +79,11 @@ print(f'\nsex, embarked 컬럼 삭제')
 newframe = newframe.drop(['sex', 'embarked'], axis=1)
 
 print(f'\n최종 데이터 일부분 확인')
-print(newframe.head().head())
+print(newframe.head())
 print(f'컬럼 정보 : {newframe.columns}')
 
 print('\n# 독립 변수 : 분석에 영향을 미치는 변수(input 데이터 : 문제지)')
-print('# 종석 변수 : 독립 변수에 의하여 영향을 받는 변수(output 데이터 : 답지)')
+print('# 종속 변수 : 독립 변수에 의하여 영향을 반는 변수(output 데이터 : 답지)')
 print('# 독립 변수와 종속 변수 분리')
 
 x = newframe[['pclass', 'age', 'sibsp', 'parch', 'female', 'male', 'town_C', 'town_Q', 'town_S']]
@@ -106,17 +107,16 @@ x_train, x_test, y_train, y_test = \
     train_test_split(x, y, test_size=0.3, random_state=10)
 
 # 모델 생성
-model = SVC(kernel='rbf', probability=True) # 확률 정보 추가 probability=True
+model = SVC(kernel='rbf', probability=True)
 
-# fit() 함수는 해당 모델을 훈련시켜 주는 함수입니다.
+# fit() 함수를 해당 모델을 훈련시켜 주는 함수입니다.
 model.fit(x_train, y_train) # 내가 공부할 시험지와 답지
 
-print('\npredict() 함수는 가장 높은 확률의 클래스 값(0 또는1)을 반환해줍니다.')
+print('\n# predict() 함수는 가장 높은 확률의 클래스 값(0 또는 1)을 반환해 줍니다.')
 prediction = model.predict(x_test) # x_test는 답지 없이 시험본 나의 문제지
 
 print('# 예측 값(모의 고사에서 내가 작성한 답지)')
 print(prediction[0:10])
-
 
 print('\n# 실제 정답 데이터(모의 고사의 진짜 답지_label)')
 print(y_test.values[0:10])
@@ -127,11 +127,12 @@ result_df = pd.DataFrame({
     'predicted': prediction, # 예측 값
     'correct': y_test.values == prediction # 맞았으면 True
 })
+
 csv_filename = dataOut + 'titanic_svm_predict.csv'
 result_df.to_csv(csv_filename, index=False, encoding='utf-8-sig')
 
 print('\n# 분류 모델 성능 평가')
-print('# confusion_matrix(실제정답데이터, 예측값')
+print('# confusion_matrix(실제정답데이터, 예측값)')
 svm_matrix = confusion_matrix(y_test, prediction)
 print(svm_matrix)
 
@@ -145,13 +146,13 @@ plt.title('Confusion Matrix')
 plt.ylabel('실제값')
 plt.xlabel('예측값')
 
-filename  = dataOut + 'svm_titanic_image_01.png'
+filename = dataOut + 'svm_titanic_image_01.png'
 plt.savefig(filename)
 print(f'{filename} 파일이 저장되었습니다.')
 
-print('\n# 분류 보고서(실제정답데이터, 예측값')
-svm_matrix = classification_report(y_test, prediction)
-print(svm_matrix)
+print('\n# 분류 보고서(classification_report)')
+svm_report = classification_report(y_test, prediction)
+print(svm_report)
 
 # predict_proba 함수는 각 클래스에 대한 확률 정보를 반환해 줍니다.
 # 이 예시는 클래스 갯수 2개이므로 예를 들면 [0.35, 0.65]의 형식으로 반환해 줍니다.
@@ -159,10 +160,10 @@ prediction_probability = model.predict_proba(x_test)
 print(prediction_probability[0:3])
 
 # 생존일 확률 정보만 따로 추출합니다.
-alive_probablility = prediction_probability[:, 1]
+alive_probability = prediction_probability[:, 1]
 
 # ROC 커브 그리기
-fpr, tpr, thresholds = roc_curve(y_test, alive_probablility)
+fpr, tpr, thresholds = roc_curve(y_test, alive_probability)
 
 roc_auc = auc(fpr, tpr)
 
@@ -170,7 +171,7 @@ roc_auc = auc(fpr, tpr)
 plt.figure(figsize=(8, 8))
 
 plt.plot(fpr, tpr, color='darkorange', lw = 2, label='ROC curve (area = %0.2f)' % roc_auc)
-plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
+plt.plot([0, 1], [0, 1], color='navy', lw = 2, linestyle='--')
 plt.xlim([0.0, 1.0])
 plt.ylim([0.0, 1.0])
 plt.title('ROC curve')
